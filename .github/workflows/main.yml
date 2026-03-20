@@ -1,0 +1,28 @@
+name: Telegram TTS Bot
+on:
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install System Deps
+        run: sudo apt-get update && sudo apt-get install -y libsndfile1 espeak-ng ffmpeg
+
+      - name: Install Libraries
+        run: |
+          pip install torch torchaudio pyTelegramBotAPI soundfile librosa
+          pip install -r requirements.txt
+
+      - name: Run Bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: python bot.py
